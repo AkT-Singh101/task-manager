@@ -50,10 +50,12 @@ const ProjectDetail = () => {
   const [users, setUsers] = useState([]);
   const [selectedUserId, setSelectedUserId] = useState('');
 
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
   const fetchProjectDetails = async () => {
     try {
       const config = { headers: { Authorization: `Bearer ${user.token}` } };
-      const res = await axios.get(`http://localhost:5000/api/projects/${id}`, config);
+      const res = await axios.get(`${API_URL}/api/projects/${id}`, config);
       setProject(res.data.project);
       setTasks(res.data.tasks);
       setMemberProgress(res.data.memberProgress);
@@ -67,7 +69,7 @@ const ProjectDetail = () => {
   const fetchAllUsers = async () => {
     try {
       const config = { headers: { Authorization: `Bearer ${user.token}` } };
-      const res = await axios.get('http://localhost:5000/api/projects/users/all', config);
+      const res = await axios.get(`${API_URL}/api/projects/users/all`, config);
       setUsers(res.data);
     } catch (error) {
       console.error('Error fetching users', error);
@@ -84,7 +86,7 @@ const ProjectDetail = () => {
     if (!selectedUserId) return;
     try {
       const config = { headers: { Authorization: `Bearer ${user.token}` } };
-      await axios.post(`http://localhost:5000/api/projects/${id}/add-member`, { userId: selectedUserId }, config);
+      await axios.post(`${API_URL}/api/projects/${id}/add-member`, { userId: selectedUserId }, config);
       setShowMemberModal(false);
       setSelectedUserId('');
       fetchProjectDetails();
@@ -102,7 +104,7 @@ const ProjectDetail = () => {
     e.preventDefault();
     try {
       const config = { headers: { Authorization: `Bearer ${user.token}` } };
-      await axios.post('http://localhost:5000/api/tasks', {
+      await axios.post(`${API_URL}/api/tasks`, {
         ...newTask,
         projectId: id,
         status: 'To Do',
@@ -119,7 +121,7 @@ const ProjectDetail = () => {
   const updateTaskStatus = async (taskId, newStatus) => {
     try {
       const config = { headers: { Authorization: `Bearer ${user.token}` } };
-      await axios.put(`http://localhost:5000/api/tasks/${taskId}`, { status: newStatus }, config);
+      await axios.put(`${API_URL}/api/tasks/${taskId}`, { status: newStatus }, config);
       // Optimistic update
       setTasks(prev => prev.map(t => t._id === taskId ? { ...t, status: newStatus } : t));
     } catch (error) {

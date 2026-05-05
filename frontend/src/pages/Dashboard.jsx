@@ -12,13 +12,14 @@ const Dashboard = () => {
   
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
   const fetchData = async () => {
     try {
       const config = { headers: { Authorization: `Bearer ${user.token}` } };
       const [statsRes, projectsRes] = await Promise.all([
-        axios.get('http://localhost:5000/api/dashboard', config),
-        axios.get('http://localhost:5000/api/projects', config)
+        axios.get(`${API_URL}/api/dashboard`, config),
+        axios.get(`${API_URL}/api/projects`, config)
       ]);
       setStats(statsRes.data);
       setProjects(projectsRes.data);
@@ -37,7 +38,7 @@ const Dashboard = () => {
     e.preventDefault();
     try {
       const config = { headers: { Authorization: `Bearer ${user.token}` } };
-      await axios.post('http://localhost:5000/api/projects', { name: newProjectName, members: [user._id] }, config);
+      await axios.post(`${API_URL}/api/projects`, { name: newProjectName, members: [user._id] }, config);
       setShowCreateModal(false);
       setNewProjectName('');
       fetchData();
